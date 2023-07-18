@@ -1,8 +1,9 @@
 #include <CL/cl.h>
+#include <gnuastro/fits.h>
 
 
 
-void gal_gpu_spinoff(char * source_str, char * kernel_name, int worker_size, )
+void gal_gpu_spinoff(char * source_str, char * kernel_name, int worker_size, int platform_id, ...)
 {
 
 
@@ -14,7 +15,19 @@ void gal_gpu_spinoff(char * source_str, char * kernel_name, int worker_size, )
 
 
 
+    // destructure input_image from varargs
+    va_list args;
+    va_start(args, platform_id);
+    gal_data_t * input_image = va_arg(args, gal_data_t *);
+    va_end(args);
 
+    // destructure kernel_image from varargs
+    va_start(args, platform_id);
+    gal_data_t * kernel_image = va_arg(args, gal_data_t *);
+    va_end(args);
+
+    
+    // TODO : create buffers of input_image and kernel_image
 
 
 
@@ -92,7 +105,7 @@ void gal_gpu_spinoff(char * source_str, char * kernel_name, int worker_size, )
 
 
     // Execute the OpenCL kernel on the list
-    size_t global_item_size = image_height*image_width; // Process the entire lists
+    size_t global_item_size = input_image->size; // Process the entire lists
     size_t local_item_size = 128; // Divide work items into groups of 64
 
 
